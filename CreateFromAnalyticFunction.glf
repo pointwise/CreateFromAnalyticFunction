@@ -25,9 +25,6 @@
 # The supplied script may include either or both of "computeSurfacePoint" and
 # "computeSegmentPoint".
 #
-# The range of U and V will always be 0.0 to 1.0. The parameters will be
-# computed by this script will be evenly-distributed in both directions.
-#
 # LIMITATIONS: The ability of this script to construct surfaces containing
 # discontinuities or sharp edges is limited. It is suggested to use two
 # functions to define such a surface. If a function that produces
