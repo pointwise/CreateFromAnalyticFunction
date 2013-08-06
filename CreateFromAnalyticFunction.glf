@@ -188,8 +188,8 @@ proc createNetworkSurface { start end numPoints } {
   # storing the surface's control points
   for { set j 0 } { $j <= $vNumPoints } { incr j } {
     for { set i 0 } { $i <= $uNumPoints } { incr i } {
-      set u [expr { $i * $uStep }]
-      set v [expr { $j * $vStep }]
+      set u [expr { $uStart + $i * $uStep }]
+      set v [expr { $vStart + $j * $vStep }]
       set point($i,$j) [computeSurfacePoint $u $v]
     }
   }
