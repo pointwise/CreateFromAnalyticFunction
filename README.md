@@ -19,10 +19,6 @@ The supplied script may include either or both of "computeSurfacePoint" and
 
 ![ScriptImage](https://raw.github.com/pointwise/CreateFromAnalyticFunction/master/TorusImage.png)
 
-## Notes
-The range of U and V will always be 0.0 to 1.0. The parameters will be
-computed by this script will be evenly-distributed in both directions.
-
 ## Limitations
 The ability of this script to construct surfaces containing
 discontinuities or sharp edges is limited. It is suggested to use two
