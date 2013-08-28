@@ -25,9 +25,6 @@
 # The supplied script may include either or both of "computeSurfacePoint" and
 # "computeSegmentPoint".
 #
-# The range of U and V will always be 0.0 to 1.0. The parameters will be
-# computed by this script will be evenly-distributed in both directions.
-#
 # LIMITATIONS: The ability of this script to construct surfaces containing
 # discontinuities or sharp edges is limited. It is suggested to use two
 # functions to define such a surface. If a function that produces
@@ -176,10 +173,10 @@ proc createNetworkSurface { start end numPoints } {
   global control surface
 
   # setting useful local variales
-  set uStart [lindex $start 0]
-  set vStart [lindex $start 1]
-  set uEnd [lindex $end 0]
-  set vEnd [lindex $end 1]
+  set uStart [expr { 1.0 * [lindex $start 0]}]
+  set vStart [expr { 1.0 * [lindex $start 1]}]
+  set uEnd [expr { 1.0 * [lindex $end 0]}]
+  set vEnd [expr { 1.0 * [lindex $end 1]}]
   set uNumPoints [lindex $numPoints 0]
   set vNumPoints [lindex $numPoints 1]
   set uStep [expr { ($uEnd - $uStart) / $uNumPoints }]
@@ -392,11 +389,15 @@ proc okAction { } {
 
   if { $control(EntityType) eq "Segment" } {
     set mode [pw::Application begin Create]
-      set stepSize [expr ($segment(End)-$segment(Start)) / $segment(NumPoints)]
+      # short cut for segment(Start) and segment(End) cast to double
+      set segStart [expr { 1.0 * $segment(Start) }]
+      set segEnd [expr { 1.0 * $segment(End) }] 
+
+      set stepSize [expr ($segEnd-$segStart) / $segment(NumPoints)]
       if { $control(SegmentType) eq "database" } {
-        createCurve $segment(Start) $segment(End) $stepSize
+        createCurve $segStart $segEnd $stepSize
       } else {
-        createConnector $segment(Start) $segment(End) $stepSize
+        createConnector $segStart $segEnd $stepSize
       }
     $mode end
   } else {
