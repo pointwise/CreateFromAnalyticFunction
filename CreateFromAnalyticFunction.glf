@@ -45,8 +45,8 @@ pw::Script loadTk
 
 set infoMessage ""
 
-set color(Valid) SystemWindow
-set color(Invalid) MistyRose
+set color(Valid) "white"
+set color(Invalid) "misty rose"
 
 set userInfoFile [file join [file dirname [info script]] "defaults.ini"]
 
@@ -430,7 +430,7 @@ proc fileAction { } {
 
 # build the user interface
 proc makeWindow { } {
-  global w control
+  global w control color
 
   # create the widgets
   label $w(LabelTitle) -text "Analytic Surface/Curve"
@@ -462,13 +462,16 @@ proc makeWindow { } {
 
     label $w(LabelStart) -text "Start (U):" -padx 2 -anchor e
     entry $w(EntryStart) -width 6 -bd 2 -textvariable segment(Start)
+    $w(EntryStart) configure -background $color(Valid)
 
     label $w(LabelEnd) -text "End (U):" -padx 2 -anchor e
     entry $w(EntryEnd) -width 6 -bd 2 -textvariable segment(End)
+    $w(EntryEnd) configure -background $color(Valid)
 
     label $w(LabelNumPoints) -text "Number of Control Points (U):" -padx 2 \
         -anchor e
     entry $w(EntryNumPoints) -width 6 -bd 2 -textvariable segment(NumPoints)
+    $w(EntryNumPoints) configure -background $color(Valid)
 
     labelframe $w(FrameType) -bd 3 -text "Curve Algorithm Options"
 
@@ -483,13 +486,16 @@ proc makeWindow { } {
 
     label $w(LabelStartUV) -text "Start (UV):" -padx 2 -anchor e
     entry $w(EntryStartUV) -width 6 -bd 2 -textvariable surface(Start)
+    $w(EntryStartUV) configure -background $color(Valid)
 
     label $w(LabelEndUV) -text "End (UV):" -padx 2 -anchor e
     entry $w(EntryEndUV) -width 6 -bd 2 -textvariable surface(End)
+    $w(EntryEndUV) configure -background $color(Valid)
 
     label $w(LabelNumPointsUV) -text "Number of Control Points (UV):" \
         -padx 2 -anchor e
     entry $w(EntryNumPointsUV) -width 6 -bd 2 -textvariable surface(NumPoints)
+    $w(EntryNumPointsUV) configure -background $color(Valid)
 
     checkbutton $w(CheckSplineUV) -text "Spline result (recommended)" \
         -variable surface(Spline)
