@@ -181,13 +181,21 @@ proc createNetworkSurface { start end numPoints } {
   set vNumPoints [lindex $numPoints 1]
   set uStep [expr { ($uEnd - $uStart) / $uNumPoints }]
   set vStep [expr { ($vEnd - $vStart) / $vNumPoints }]
+  set numArgs [llength [info args computeSurfacePoint]]
 
   # storing the surface's control points
   for { set j 0 } { $j <= $vNumPoints } { incr j } {
     for { set i 0 } { $i <= $uNumPoints } { incr i } {
       set u [expr { $uStart + $i * $uStep }]
       set v [expr { $vStart + $j * $vStep }]
-      set point($i,$j) [computeSurfacePoint $u $v]
+      switch $numArgs {
+      2 {
+        set point($i,$j) [computeSurfacePoint $u $v] }
+      4 {
+        set point($i,$j) [computeSurfacePoint $u $v $start $end] }
+      default {
+        error illegal number of args to computeSurfacePoint }
+      }
     }
   }
 
@@ -391,7 +399,7 @@ proc okAction { } {
     set mode [pw::Application begin Create]
       # short cut for segment(Start) and segment(End) cast to double
       set segStart [expr { 1.0 * $segment(Start) }]
-      set segEnd [expr { 1.0 * $segment(End) }] 
+      set segEnd [expr { 1.0 * $segment(End) }]
 
       set stepSize [expr ($segEnd-$segStart) / $segment(NumPoints)]
       if { $control(SegmentType) eq "database" } {
