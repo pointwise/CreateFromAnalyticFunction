@@ -5,14 +5,52 @@ Create database curves or surfaces, even connectors, using a simple analytic fun
 
 ## Usage
 An analytic surface is created by supplying a Tcl proc named
-"computeSurfacePoint" in a separate script file, which must accept two
-numeric arguments (U, V), and return a point in 3-D space (represented
+"computeSurfacePoint" in a separate script file, which must accept either two
+or four arguments and return a point in 3-D space (represented
 as a list in the form "$x $y $z").
+
+The two argument Tcl proc must accept the numeric arguments U and V. This version of the
+Tcl proc is used when your analytic function only requires the surface's uv values.
+
+For example:
+```Tcl
+proc computeSurfacePoint { u v } {
+  # your code here
+  return [list $x $y $z]
+}
+```
+
+The four argument Tcl proc must accept the numeric arguments U and V and the
+minUV and maxUV surface limits. This version of the Tcl proc is used when your
+analytic function requires the surface's uv values and the full parametric
+surface extents.
+
+For example:
+```Tcl
+proc computeSurfacePoint { u v minUV maxUV } {
+  set uMin [expr { 1.0 * [lindex $uvMin 0]}]
+  set vMin [expr { 1.0 * [lindex $uvMin 1]}]
+  set uMax [expr { 1.0 * [lindex $uvMax 0]}]
+  set vMax [expr { 1.0 * [lindex $uvMax 1]}]
+  # your code here
+  return [list $x $y $z]
+}
+```
 
 An analytic curve is created by supplying a Tcl proc named
 "computeSegmentPoint" in a separate script file, which must accept one
 numeric argument (U), and return a point in 3-D space (represented as a
 list in the form "$x $y $z").
+
+The two argument Tcl proc must accept the numeric arguments U and V.
+
+For example:
+```Tcl
+proc computeSegmentPoint { u } {
+  # your code here
+  return [list $x $y $z]
+}
+```
 
 The supplied script may include either or both of "computeSurfacePoint" and
 "computeSegmentPoint".
