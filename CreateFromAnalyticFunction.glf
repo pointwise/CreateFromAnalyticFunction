@@ -141,11 +141,19 @@ proc createSegment { start end step {fmt simple} {const 0} } {
   global control
 
   set segment [pw::SegmentSpline create]
+  set numArgs [llength [info args computeSegmentPoint]]
   for { set u $start } { $u <= $end+($step/2.0) } { set u [expr $u + $step] } {
     if { $u > $end } {
       set u $end
     }
-    $segment addPoint [computeSegmentPoint $u]
+    switch $numArgs {
+    1 {
+      $segment addPoint [computeSegmentPoint $u] }
+    3 {
+      $segment addPoint [computeSegmentPoint $u $start $end] }
+    default {
+      error {Illegal number of args to computeSegmentPoint} }
+    }
   }
 
   $segment setSlope $::segment(Type)
@@ -168,6 +176,32 @@ proc createCurve { start end stepSize {fmt simple} {const 0} } {
   return $curve
 }
 
+proc procExists { procName } {
+  return [expr {"$procName" eq [info procs $procName]}]
+}
+
+proc callOptionalProc { procName args } {
+  if { [procExists $procName] } {
+    $procName {*}$args
+  }
+}
+
+proc callBeginSurface { uStart vStart uEnd vEnd uNumPoints vNumPoints } {
+  callOptionalProc beginSurface $uStart $vStart $uEnd $vEnd $uNumPoints $vNumPoints
+}
+
+proc callBeginSurfaceV { v } {
+  callOptionalProc beginSurfaceV $v
+}
+
+proc callEndSurfaceV { v } {
+  callOptionalProc endSurfaceV $v
+}
+
+proc callEndSurface { } {
+  callOptionalProc endSurface
+}
+
 # creates a database surface by saving a plot3D file and loading it
 proc createNetworkSurface { start end numPoints } {
   global control surface
@@ -183,21 +217,25 @@ proc createNetworkSurface { start end numPoints } {
   set vStep [expr { ($vEnd - $vStart) / $vNumPoints }]
   set numArgs [llength [info args computeSurfacePoint]]
 
+  callBeginSurface $uStart $vStart $uEnd $vEnd $uNumPoints $vNumPoints
   # storing the surface's control points
   for { set j 0 } { $j <= $vNumPoints } { incr j } {
+    set v [expr { $vStart + $j * $vStep }]
+    callBeginSurfaceV $v
     for { set i 0 } { $i <= $uNumPoints } { incr i } {
       set u [expr { $uStart + $i * $uStep }]
-      set v [expr { $vStart + $j * $vStep }]
       switch $numArgs {
       2 {
         set point($i,$j) [computeSurfacePoint $u $v] }
       4 {
         set point($i,$j) [computeSurfacePoint $u $v $start $end] }
       default {
-        error illegal number of args to computeSurfacePoint }
+        error {Illegal number of args to computeSurfacePoint} }
       }
     }
+    callEndSurfaceV $v
   }
+  callEndSurface
 
   # create and start the file
   set netPath [file join [file dirname [info script]] \
@@ -363,12 +401,12 @@ proc validateUserProcs { fileName } {
 
   # load the new file
   if { [file exists $fileName] } {
-    source $fileName
+    catch { source $fileName }
   }
 
   # figure out which type of file the user loaded.
-  set canMakeSegment [expr { !([info procs "computeSegmentPoint"] eq {}) }]
-  set canMakeSurface [expr { !([info procs "computeSurfacePoint"] eq {}) }]
+  set canMakeSegment [procExists "computeSegmentPoint"]
+  set canMakeSurface [procExists "computeSurfacePoint"]
 
   # set widget states to match the file-type
   if { $canMakeSegment && $canMakeSurface } {
