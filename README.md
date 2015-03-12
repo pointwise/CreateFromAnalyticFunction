@@ -7,7 +7,7 @@ Create database curves or surfaces, even connectors, using a simple analytic fun
 
 The analytic surfaces and curves are defined by a custom script containing one or more
 *well known* callback funtions. These callback funtions are responsible for returning
-the xyz point correspionding to the UV values passed to the callback.
+the xyz point corresponding to the UV values passed to the callback.
 
 * `proc computeSurfacePoint { u v }`
 * `proc computeSurfacePoint { u v minUV maxUV }`
