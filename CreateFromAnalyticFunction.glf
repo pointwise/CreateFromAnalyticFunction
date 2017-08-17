@@ -112,6 +112,7 @@ set w(FrameMain)              .main
     set w(FrameSegmentType)        $w(FrameSegment).fsegtype
       set w(RadioDatabase)          $w(FrameSegmentType).rdatabase
       set w(RadioGrid)              $w(FrameSegmentType).rgrid
+      set w(RadioSource)            $w(FrameSegmentType).rsource
     set w(LabelStart)             $w(FrameSegment).lstart
     set w(EntryStart)             $w(FrameSegment).estart
     set w(LabelEnd)               $w(FrameSegment).lend
@@ -174,6 +175,14 @@ proc createCurve { start end stepSize {fmt simple} {const 0} } {
   set curve [pw::Curve create]
   $curve addSegment $segment
   return $curve
+}
+
+# creates a source (createSegment is a helper)
+proc createSourceCurve { start end stepSize {fmt simple} {const 0} } {
+  set segment [createSegment $start $end $stepSize $fmt $const]
+  set srcCurve [pw::SourceCurve create]
+  $srcCurve addSegment $segment
+  return $srcCurve
 }
 
 proc procExists { procName } {
@@ -442,8 +451,10 @@ proc okAction { } {
       set stepSize [expr ($segEnd-$segStart) / $segment(NumPoints)]
       if { $control(SegmentType) eq "database" } {
         createCurve $segStart $segEnd $stepSize
-      } else {
+      } elseif { $control(SegmentType) eq "grid" } {
         createConnector $segStart $segEnd $stepSize
+      } else {
+        createSourceCurve $segStart $segEnd $stepSize
       }
     $mode end
   } else {
@@ -505,6 +516,8 @@ proc makeWindow { } {
           -variable control(SegmentType) -value database
       radiobutton $w(RadioGrid) -width 12 -bd 2 -text "Grid Connector" \
           -variable control(SegmentType) -value grid
+      radiobutton $w(RadioSource) -width 12 -bd 2 -text "Source Curve" \
+          -variable control(SegmentType) -value source
 
     label $w(LabelStart) -text "Start (U):" -padx 2 -anchor e
     entry $w(EntryStart) -width 6 -bd 2 -textvariable segment(Start)
@@ -599,7 +612,7 @@ proc makeWindow { } {
   grid $w(FrameSegment) -sticky ew -pady 5 -padx 5 -column 0 -columnspan 3
 
     grid $w(FrameSegmentType) -sticky ew -pady 5 -padx 5 -column 0 -columnspan 2
-      grid $w(RadioDatabase) $w(RadioGrid) -sticky ew -pady 3 -padx 3
+      grid $w(RadioDatabase) $w(RadioGrid) $w(RadioSource) -sticky ew -pady 3 -padx 3
 
     grid $w(LabelStart) $w(EntryStart) -sticky ew -pady 3 -padx 3
     grid $w(LabelEnd) $w(EntryEnd) -sticky ew -pady 3 -padx 3

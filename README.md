@@ -1,5 +1,5 @@
 # CreateFromAnalyticFunction
-Create database curves or surfaces, even connectors, using a simple analytic function script.
+Create database curves or surfaces, connectors, or even source curves using a simple analytic function script.
 
 ![ScriptImage](https://raw.github.com/pointwise/CreateFromAnalyticFunction/master/TkGUI.png)
 
